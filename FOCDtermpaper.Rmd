@@ -1,0 +1,97 @@
+---
+title: "Public Interest in USDA/NASS's Statistical Reports"
+subtitle: "via social media"
+author: "Doug Kilburg & Arthur Rosales"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    df_print: kable
+references:
+- id: Wickham2014
+  title: Tidy Data
+  author:
+  - family: Wickham
+    given: Hadley
+  container-title: Journal of Statistical Software
+  volume: 59
+  issue: 10
+  page: 1-23
+  type: article-journal
+  issued:
+    year: 2014
+- id: Baumer2017
+  title: Modern Data Science with R
+  author:
+  - family: Baumer
+    given: Benjamin S.
+  - family: Kaplan
+    given: Daniel T.
+  - family: Horton
+    given: Nicholas J.
+  type: book
+  publisher: Chapman \& Hall/CRC Press.
+  issued:
+    year: 2017
+---
+
+```{r, include = FALSE}
+library(knitr)
+library(tidyverse)
+```
+
+## Introduction
+
+Food is a necessity in everyone's life.  It serves as a life source in some instances and entertainment as well as a luxury in others.  As a result, the United States Department of Agriculture (USDA) strives to serve the American Public as well as members of the international community, not just farmers. It is this reason the USDA recently launched a website geared towards better customer service.  https://ask.usda.gov/s/ [@Wickham2014; @Baumer2017].
+
+The USDA is subdivided into many smaller agencies within the cabinet level department.  The National Agricultural Statistics Service (NASS) is a statistical agency within the USDA.  Its main purpose is to provide timely, useful and accurate statistics in service to U.S. agriculture.  Timely and accurate are two metrics that are easily quantified.  Useful statistics is subject to interpretation by the user.  As a result, NASS strives to engage the users of our statistical publications in multiple ways to ensure the data the agency provides remains useful to these people.  NASS holds data users meetings annually, to gather feedback on the usefulness of our products, and potential ways to improve the usefulness of the products in the future.  NASS also recently started sponsoring a hashtag #StatChat on Twitter through the agency's Twitter account.  After speculative commodity report releases, considered to be the most major of our reports among policy makers, members of the media, and commodity investors, one of the Chief Statisticians in charge of the estimates for the speculative commodity reports will answer Twitter questions regarding information in the release that possess the hashtag #StatChat.  
+
+## Data
+
+This section describes the data sources and the data gathering process.
+
+```{r}
+# A code chunk that exemplifies the data gathering process
+```
+
+```{r, include = FALSE}
+# Additional code chunks that repeat tasks or do basic things can be hidden
+```
+
+## Results
+
+This section presents the main results.
+
+### Data exploration
+
+The results section may have a data exploration part, but in general the structure here depends on the specific project.
+
+```{r}
+# What happens here depends on the specific project
+```
+
+```{r}
+# What happens here depends on the specific project
+```
+
+### Analysis
+
+This section presents the main results, such as (for example) stats and graphs that show relationships, model results and/or clustering, PCA, etc.
+
+```{r}
+# What happens here depends on the specific project
+```
+
+```{r}
+# What happens here depends on the specific project
+```
+
+```{r}
+# What happens here depends on the specific project
+```
+
+## Discussion
+
+This section summarizes the results and may briefly outline advantages and limitations of the work presented.
+
+## References
