@@ -46,9 +46,35 @@ Food is a necessity in everyone's life.  It serves as a life source in some inst
 
 The USDA is subdivided into many smaller agencies within the cabinet level department.  The National Agricultural Statistics Service (NASS) is a statistical agency within the USDA.  Its main purpose is to provide timely, useful and accurate statistics in service to U.S. agriculture.  Timely and accurate are two metrics that are easily quantified.  Useful statistics is subject to interpretation by the user.  As a result, NASS strives to engage the users of our statistical publications in multiple ways to ensure the data the agency provides remains useful to these people.  NASS holds data users meetings annually, to gather feedback on the usefulness of our products, and potential ways to improve the usefulness of the products in the future.  NASS also recently started sponsoring a hashtag #StatChat on Twitter through the agency's Twitter account.  After speculative commodity report releases, considered to be the most major of our reports among policy makers, members of the media, and commodity investors, one of the Chief Statisticians in charge of the estimates for the speculative commodity reports will answer Twitter questions regarding information in the release that possess the hashtag #StatChat.  
 
-## Data
+Although this provides support of our speculative products, many users of our data are not related to speculative commodity reports.  Users range from teachers learning which state produces the most pumpkins for a lesson on Halloween and Thanksgiving, to farmers wanting to market local produce at a farmer's market.  NASS employees occasionally are told how people use the NASS data when they first meet someone and tell them what they do for work.  This lends to wonder if there is strong enough interest in other NASS products that would warrant #StatChat sessions besides just speculative commodity releases.
 
-This section describes the data sources and the data gathering process.
+## Specific NASS reports
+
+NASS issues hundreds of reports annually.  Some are published weekly, monthly, quarterly and yearly.  Due to the large number of releases by our agency, we will focus on primary monthly and  yearly reports.  We have identified 16 reports to investigate public interest.  Below is a specific list of reports for which we will attempt to gauge public interest.  Note that the Farm and Ranch Irrigation Survey changed its name to the Irrigation and Water Management Survey (IWMS) at the end of 2018.  To ensure proper interest, both survey titles will be used to ensure proper coverage.
+
+- Agricultural Chemical Usage Survey
+- Agricultural Prices 
+- Cattle
+- Cattle on Feed
+- Census of Horticulture
+- Certified Organic Survey
+- Cold Storage Report
+- Cotton Ginnings
+- Crop Progress 
+- Dairy Products Report
+- Grain Crushings
+- Hop Stocks
+- Irrigation and Water Management Survey (IWMS)/Farm and Ranch Irrigation Survey (FRIS)*
+- Livestock Slaughter
+- Local Foods Survey
+- Rice Stocks
+
+## Data Sources
+
+The rise of global internet access by the majority of people lends to an obvious choice as a resource to gauge public interest.
+
+There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape reddit and RStudio to scrape Twitter and search google web and news searches for our key terms.
+
 
 ```{r}
 # A code chunk that exemplifies the data gathering process
