@@ -71,9 +71,15 @@ NASS issues hundreds of reports annually.  Some are published weekly, monthly, q
 
 ## Data Sources
 
-The rise of global internet access by the majority of people lends to an obvious choice as a resource to gauge public interest.
+The rise of global internet access by the majority of people lends to the internet an obvious choice as a resource for resources to gauge public interest.
 
-There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape reddit and RStudio to scrape Twitter and search google web and news searches for our key terms.
+There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape Reddit and RStudio to scrape Twitter and as well as scan google web and news searches for our key terms. We defined our interest peiod to be from November 1, 2018 to November 1, 2020.
+
+For Reddit, there were three subreddits we scraped useing Python.  These three subreddits were Agriculture, Farming and Science.  For the Google news and web searches, we used the gtrendsR package in RStudio to pull searches via the gtrends function.  
+
+Due to the Twitter restrictions on scraping web tweets across the entire platform, we decided to focus solely on the Twitter Timelines of the followers from the NASS Twitter account.  We first pulled all the follower screen names from Twitter, then we imported the list into RStudio as a list we would later subset.  At the time of the follower pull, there were 41,244 Twitter followers of the NASS account.
+
+We used the RTweets package in RStudio to access the twitter platform, and used the get_Timeline function in that package to scrape the timelines of all the NASS followers.  This function has a maximum capacity of 3200 tweets per timeline, but we found this wasn't an issue with our list of users and the timeframe we specified.
 
 
 ```{r}
