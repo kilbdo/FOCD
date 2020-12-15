@@ -75,20 +75,108 @@ The rise of global internet access by the majority of people lends to the intern
 
 There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape Reddit and RStudio to scrape Twitter and as well as scan google web and news searches for our key terms. We defined our interest peiod to be from November 1, 2018 to November 1, 2020.
 
+## Reddit
+
 For Reddit, there were three subreddits we scraped useing Python.  These three subreddits were Agriculture, Farming and Science.  For the Google news and web searches, we used the gtrendsR package in RStudio to pull searches via the gtrends function.  
+
+```{r}
+##insert reddit code here
+```
+
+## Twitter 
 
 Due to the Twitter restrictions on scraping web tweets across the entire platform, we decided to focus solely on the Twitter Timelines of the followers from the NASS Twitter account.  We first pulled all the follower screen names from Twitter, then we imported the list into RStudio as a list we would later subset.  At the time of the follower pull, there were 41,244 Twitter followers of the NASS account.
 
 We used the RTweets package in RStudio to access the twitter platform, and used the get_Timeline function in that package to scrape the timelines of all the NASS followers.  This function has a maximum capacity of 3200 tweets per timeline, but we found this wasn't an issue with our list of users and the timeframe we specified.
 
+We also subsetted the scraped timeslines to only include the variables  we needed, as well as to match our two year period of reference.
 
 ```{r}
-# A code chunk that exemplifies the data gathering process
+twitterfollowers <- as.data.frame(twitterfollowers)
+twitternames <- twitterfollowers[,"screenname"]
+
+#scrape the twitter follower's timelines
+followertweets <- get_timeline(
+  twitternames,
+  n = 3200,
+  max_id = NULL,
+  home = FALSE,
+  parse = TRUE,
+  check = FALSE,
+  token = NULL)
+
+cleantweets2 <- followertweets[ ,c("created_at","screen_name","text","reply_to_screen_name","is_retweet")]
+
+cleantweets3 <- subset(cleantweets2,cleantweets2$created_at>as.Date("2018-11-30"))
+cleantweets3$Month_Yr <- format(as.Date(cleantweets3$created_at), "%Y-%m")
 ```
 
-```{r, include = FALSE}
-# Additional code chunks that repeat tasks or do basic things can be hidden
+We then subsetted the tweets obtained from the timelines of the followers from our NASS Twitter account by each product survey, enabling us to obtain a count of the tweets containing mentions of our product names.  To ensure the tweets mentioning local foods were indeed referencing the USDA reports, the term USDA was also used as a subset requirement.  
+
+```{r}
+OrganTwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Organic Survey"))
+ColdStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cold Storage"))
+COFtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle on Feed"))
+RiceStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Rice Stocks"))
+CropProgtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Crop Progress"))
+localfood2twitter <- subset(cleantweets3,str_detect(cleantweets3$text,"USDA"))
+LocalFoodTwitter <- subset(localfood2twitter,str_detect(localfood2twitter$text,"Local Food"))
+AgPricestwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Agricultural Prices"))
+Cattletwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle"))
+FRIStwitter <-  subset(cleantweets3,str_detect(cleantweets3$text,"Farm and Ranch Irrigation Survey"))
+IWMStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Irrigation and Water Management Survey"))
+CottonGintwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cotton Ginnings"))
+DairyPtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Dairy Products"))
+LSlaughtertwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Livestock Slaughter"))
+GrainCrushtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Grain Crushings"))
+HopStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Hop Stocks"))
+AgChemtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Agricultural Chemical Usage"))
+Horttwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Census of Horticulture"))
+CattleNumtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle Numbers"))
+ColdSReptwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cold Storage eport"))
 ```
+
+## Google searches
+
+Combing all keyword phrases into one string resulted in the following error:
+
+Error in gtrends()...length(keyword) <= 5 is not TRUE
+
+As a result, we broke up the string of keyword phrases into distinct groups of five keyword phrases to use to query both google web and google news searches.
+
+
+```{r}
+keyword1 <- c("Certified Organic Survey", "Cold Storage", "Cattle on Feed", "Rice Stocks", "Crop Progress")
+keyword2 <- c("Local Foods", "Agricultural Prices", "Cattle Survey", "Farm and Ranch Irrigation Survey", "Irrigation and Water Management Survey")
+keyword3 <- c("Cotton Ginnings", "Dairy Products", "Livestock Slaughter", "Grain Crushings", "Hop Stocks")
+keyword4 <- c("Agricultural Chemical Usage", "Census of Horticulture")
+
+res_finalw1 <- gtrends(keyword1, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "web",tz=0)
+res_finalw2 <- gtrends(keyword2, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "web",tz=0)
+res_finalw3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "web",tz=0)
+res_finalw4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "web",tz=0)
+
+res_finaln1 <- gtrends(keyword1, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
+res_finaln2 <- gtrends(keyword2, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
+res_finaln3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
+res_finaln4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
+
+```
+
+In the end, we combined all versions into one file and deleted each instance that had zero hits.  We spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
+
+```{r, include = FALSE}
+res_time_finalw <- rbind(res_time_finalw1,res_time_finalw2,res_time_finalw3,res_time_finalw4)
+res_time_finaln <- rbind(res_time_finaln1,res_time_finaln2,res_time_finaln3,res_time_finaln4)
+
+#only keep dates with positive hits
+res_time_finalweb <- subset(res_time_finalw, hits>0)
+res_time_finalnews <- subset(res_time_finaln, hits>0)
+
+res_time_web <- spread(res_time_finalweb, key = keyword, value = hits)
+res_time_news <- spread(res_time_finalnews, key = keyword, value = hits)
+```
+
 
 ## Results
 
