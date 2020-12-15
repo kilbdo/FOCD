@@ -81,7 +81,7 @@ There are a few social media sights on the internet that will provide a diverse 
 
 ## Reddit
 
-For Reddit, there were three subreddits we scraped useing Python.  These three subreddits were Agriculture, Farming and Science. This was performed using the Python "psaw" module. Within each subreddit, both submissions and comments were collected which matched the keyword searches. Keyword searches were performed with both phrases which were either capitalized or not, and inlcuded the word "survey" or not. For the sake of illustration, only the "Dairy Products Survey" within the Agriculture subreddit is shown here.
+For Reddit, there were three subreddits we scraped using Python.  These three subreddits were Agriculture, Farming and Science. This was performed using the Python "psaw" module. Within each subreddit, both submissions and comments were collected which matched the keyword searches. Keyword searches were performed with both phrases which were either capitalized or not, and included the word "survey" or not. For the sake of illustration, only the "Dairy Products Survey" within the Agriculture subreddit is shown here.
 
 ```{r eval = FALSE}
 ##insert reddit code here
@@ -294,7 +294,7 @@ res_finaln3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01", low
 res_finaln4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
 ```
 
-In the end, we combined all versions into one file and deleted each instance that had zero hits.  We spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
+In the end, we combined all versions into one file and deleted each instance that had zero hits.  We had spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
 
 ```{r, eval=FALSE, include = FALSE}
 res_time_finalw <- rbind(res_time_finalw1,res_time_finalw2,res_time_finalw3,res_time_finalw4)
@@ -313,7 +313,7 @@ This section presents the main results.
 
 ### Data exploration
 
-Once we collected data from all sources, they need to be combined into a single dataset for analysis. Of note, this includes a seperate dataset of "Dates" which is effectively the USDA NASS product release calendar for the relevent dates.
+Once we collected data from all sources, they need to be combined into a single dataset for analysis. Of note, this includes a separate dataset of "Dates" which is effectively the USDA NASS product release calendar for the relevant dates.
 
 
 ```{r}
@@ -339,7 +339,6 @@ full<-full %>%
 left_join(red, by="ddate")
 
 
-
 full<-full%>%
 mutate(tdate=anytime(ddate))
 
@@ -363,8 +362,8 @@ mutate(cold_stor_date=ifelse(cold_stor==1,tdate,cold_stor))
 
 ### Analysis
 
-This section presents the main results, such as (for example) stats and graphs that show relationships, model results and/or clustering, PCA, etc.
-One interesting relationship we found was that between the Cattle Survey data release dates and Google interest in the corrosponding keywords. This would suggest that many users are well aware of this product, and know how to search for the data releases. Perhaps one way people look for NASS data is by way of Google search? This might also suggest that users find it easier to search for this NASS prodcut on Google than to actually navigate through the NASS website itself.
+One interesting relationship we found was between the Cattle Survey data release dates and Google interest in the corresponding keywords. This would suggest many users are well aware of this product, and know how to search for the data releases. Perhaps one way people look for NASS data is via a Google search. This might also suggest that users find it easier to search for this NASS product on Google than to actually navigate through the NASS website itself.
+
 ```{r}
 
 #cattle plot
@@ -378,7 +377,7 @@ cattleplot<-cattleplot+geom_vline(aes(xintercept=as.numeric(cattle_date)), color
 cattleplot+scale_x_discrete(label = function(x) stringr::str_trunc(x, 10))
 
 ```
-Another interesting finding was the relationship between the NASS Crop Progress and Condition weekly releases and a well known flood that impacted the midwest in Spring of 2019. While google interest in the the weekly releases is relatively consistent for most of the two years, there was a significant spike in searches in the timeframe immediately after the flood. This spike may have been driven my commodity traders who were particularly concerned with the impact that this flood would have had on corn and soybeans. This interest may also have been driven by the abundant mainstream news articles that covered this flooding event, raising awareness about NASS Crop Progress and Condition in the general public.
+Another interesting finding was the relationship between the NASS Crop Progress and Condition weekly releases and a well known flood that impacted the Midwest in Spring of 2019. While google interest in the the weekly releases is relatively consistent for most of the two years, there was a significant spike in searches in the timeframe immediately after the flood. This spike may have been driven my commodity traders who were particularly concerned with the impact that this flood would have had on corn and soybeans. This interest may also have been driven by the abundant mainstream news articles that covered this flooding event, raising awareness about NASS Crop Progress and Condition in the general public.
 ```{r}
 # Crop Progress and Condition Plot
 progplot<-ggplot(full,aes(x=tdate)) + 
@@ -400,7 +399,7 @@ It was the intention to include internal metrics, such as the total number of do
 
 Further investigation into internet sources where a majority of the agriculture community would also be beneficial.  Using our current sources provides a good first introduction to public interest; however, the majority of our data users may be concentrated better in other social media outlets in the internet.
 
-Only preliminary evaluation of the content of the tweets were analyzed, spot checking for checks on reference to the USDA products  on items with little total reportrs.  Due to the nature of the titles of our product releases, sentiment analysis is difficult to determine.  For instance, the product release titled "Livestock Slaughter" could be interpreted literally where people are discussing the massive livestock slaughter that occurred in the late spring of 2020 due to the massive restaurant closures across the country.  Demand for livestock consumables drastically declined and the industry had no way of immediately rerouting the supply of meat to alternate markets.  With more time, further investigation could be used to determine which matches were referring to NASS reports.  
+Only preliminary evaluation of the content of the tweets were analyzed, spot checking for checks on reference to the USDA products  on items with little total reports.  Due to the nature of the titles of our product releases, sentiment analysis is difficult to determine.  For instance, the product release titled "Livestock Slaughter" could be interpreted literally where people are discussing the massive livestock slaughter that occurred in the late spring of 2020 due to the massive restaurant closures across the country.  Demand for livestock consumables drastically declined and the industry had no way of immediately rerouting the supply of meat to alternate markets.  With more time, further investigation could be used to determine which matches were referring to NASS reports.  
 
 Once the reference to NASS products was narrowed down, it could be useful to analyze sentiment of the mention.  Gauging a positive or negative overall sentiment may help guide the agency response to reactions of a particular product release.
 
