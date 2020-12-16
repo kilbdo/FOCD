@@ -8,31 +8,15 @@ output:
     toc: yes
     df_print: kable
 references:
-- id: Wickham2014
-  title: Tidy Data
+- id: NWS2019
+  title: Spring Flooding Summary 2019
   author:
-  - family: Wickham
-    given: Hadley
-  container-title: Journal of Statistical Software
-  volume: 59
-  issue: 10
-  page: 1-23
-  type: article-journal
+  - family: National Oceanic and Atmosphere Administration
+    given: National Weather Service
+  type: website
+  publisher: https://www.weather.gov/dvn/summary_SpringFlooding_2019
   issued:
-    year: 2014
-- id: Baumer2017
-  title: Modern Data Science with R
-  author:
-  - family: Baumer
-    given: Benjamin S.
-  - family: Kaplan
-    given: Daniel T.
-  - family: Horton
-    given: Nicholas J.
-  type: book
-  publisher: Chapman \& Hall/CRC Press.
-  issued:
-    year: 2017
+    year: 2019
 ---
 
 ```{r, include = FALSE}
@@ -46,7 +30,7 @@ library(zoo)
 
 ## Introduction
 
-Food is a necessity in everyone's life.  It serves as a life source in some instances and entertainment as well as a luxury in others.  As a result, the United States Department of Agriculture (USDA) strives to serve the American Public as well as members of the international community, not just farmers. It is this reason the USDA recently launched a website geared towards better customer service.  https://ask.usda.gov/s/ [@Wickham2014; @Baumer2017].
+Food is a necessity in everyone's life.  It serves as a life source in some instances and entertainment as well as a luxury in others.  As a result, the United States Department of Agriculture (USDA) strives to serve the American Public as well as members of the international community, not just farmers. It is this reason the USDA recently launched a website geared towards better customer service.  https://ask.usda.gov/s/.
 
 The USDA is subdivided into many smaller agencies within the cabinet level department.  The National Agricultural Statistics Service (NASS) is a statistical agency within the USDA.  Its main purpose is to provide timely, useful and accurate statistics in service to U.S. agriculture.  Timely and accurate are two metrics that are easily quantified.  Useful statistics is subject to interpretation by the user.  As a result, NASS strives to engage the users of our statistical publications in multiple ways to ensure the data the agency provides remains useful to these people.  NASS holds data users meetings annually, to gather feedback on the usefulness of our products, and potential ways to improve the usefulness of the products in the future.  NASS also recently started sponsoring a hashtag #StatChat on Twitter through the agency's Twitter account.  After speculative commodity report releases, considered to be the most major of our reports among policy makers, members of the media, and commodity investors, one of the Chief Statisticians in charge of the estimates for the speculative commodity reports will answer Twitter questions regarding information in the release that possess the hashtag #StatChat.  
 
@@ -77,7 +61,7 @@ NASS issues hundreds of reports annually.  Some are published weekly, monthly, q
 
 The rise of global internet access by the majority of people lends to the internet an obvious choice as a resource for resources to gauge public interest.
 
-There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape Reddit and RStudio to scrape Twitter and as well as scan google web and news searches for our key terms. We defined our interest peiod to be from November 1, 2018 to November 1, 2020.
+There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape Reddit and RStudio to scrape Twitter and as well as scan Google web and news searches for our key terms. We defined our interest period to be from November 1, 2018 to November 1, 2020.
 
 ## Reddit
 
@@ -224,9 +208,9 @@ unique(reddit$product, incomparables = FALSE)
 
 Due to the Twitter restrictions on scraping web tweets across the entire platform, we decided to focus solely on the Twitter Timelines of the followers from the NASS Twitter account.  We first pulled all the follower screen names from Twitter, then we imported the list into RStudio as a list we would later subset.  At the time of the follower pull, there were 41,244 Twitter followers of the NASS account.
 
-We used the RTweets package in RStudio to access the twitter platform, and used the get_Timeline function in that package to scrape the timelines of all the NASS followers.  This function has a maximum capacity of 3200 tweets per timeline, but we found this wasn't an issue with our list of users and the timeframe we specified.
+We used the RTweets package in RStudio to access the twitter platform, and used the get_Timeline function in that package to scrape the timelines of all the NASS followers.  This function has a maximum capacity of 3200 tweets per timeline, but we found this wasn't an issue with our list of users and the time frame we specified.
 
-We also subsetted the scraped timeslines to only include the variables  we needed, as well as to match our two year period of reference.
+We also subsetted the scraped timelines to only include the variables  We needed, as well as to match our two year period of reference.
 
 ```{r eval=FALSE}
 twitterfollowers <- as.data.frame(twitterfollowers)
@@ -276,7 +260,7 @@ Combing all keyword phrases into one string resulted in the following error:
 
 Error in gtrends()...length(keyword) <= 5 is not TRUE
 
-As a result, we broke up the string of keyword phrases into distinct groups of five keyword phrases to use to query both google web and google news searches.
+As a result, we broke up the string of keyword phrases into distinct groups of five keyword phrases to use to query both Google web and Google news searches.
 
 
 ```{r eval=FALSE}
@@ -294,7 +278,7 @@ res_finaln3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01", low
 res_finaln4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01", low_search_volume = T, gprop = "news",tz=0)
 ```
 
-In the end, we combined all versions into one file and deleted each instance that had zero hits.  We had spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
+In the end, we combined all versions into one file and deleted each instance that had zero hits.  We spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
 
 ```{r, eval=FALSE, include = FALSE}
 res_time_finalw <- rbind(res_time_finalw1,res_time_finalw2,res_time_finalw3,res_time_finalw4)
@@ -307,11 +291,7 @@ res_time_news <- spread(res_time_finalnews, key = keyword, value = hits)
 ```
 
 
-## Results
-
-This section presents the main results.
-
-### Data exploration
+### Results & Data exploration
 
 Once we collected data from all sources, they need to be combined into a single dataset for analysis. Of note, this includes a separate dataset of "Dates" which is effectively the USDA NASS product release calendar for the relevant dates.
 
@@ -339,6 +319,7 @@ full<-full %>%
 left_join(red, by="ddate")
 
 
+
 full<-full%>%
 mutate(tdate=anytime(ddate))
 
@@ -356,13 +337,72 @@ full<-full%>%
 mutate(cold_stor_date=ifelse(cold_stor==1,tdate,cold_stor))
 ```
 
+The Google web searches are dominated "Cattle", "Cold Storage", and "Dairy Products", which all pertain to livestock aspects of agriculture. The least popular search was "Agricultural Prices
+
+```{r}
+
+googlew<-full[ , grepl( "gtw_" , names( full ) ) ]
+googlewsums=data.frame(value=colSums(googlew[,], na.rm=TRUE))
+googlewsums$key=rownames(googlewsums)
+googlewsums$key  <- with(googlewsums, reorder(key, -value))
+ggplot(data=googlewsums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
+
+```
+
+Next, we can see the keyword categories with the most hits for Google News searches. Again, this was very livestock driven, with "Cattle", "Cold Storage", and "Dairy Products" driving the most hits.
+
 ```{r}
 # What happens here depends on the specific project
+googlen<-full[ , grepl( "gtn_" , names( full ) ) ]
+googlensums=data.frame(value=colSums(googlen[,], na.rm=TRUE))
+googlensums$key=rownames(googlensums)
+googlensums$key  <- with(googlensums, reorder(key, -value))
+ggplot(data=googlensums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
 ```
+
+We also look at the Reddit most popular discussion topics. In line with the google hits, "Cattle" and "Dairy Products" were the top two discussion topics in the selected subreddits. This was distantly followed by "Crop Progress and Condition", "Census of Horticulture", and "Cold Storage.
+
+```{r}
+# What happens here depends on the specific project
+reddit<-full[ , grepl( "red_" , names( full ) ) ]
+redditsums=data.frame(value=colSums(reddit[,], na.rm=TRUE))
+redditsums$key=rownames(redditsums)
+redditsums$key  <- with(redditsums, reorder(key, -value))
+ggplot(data=redditsums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
+```
+
+We are curious if there are factors which drive the interest in these products over time. Here, we compare the trends in interest in the common top two between the three web sources "Cattle" and "Dairy Products". At first look, the trend for these two topics of interest seem quite different for each of the three web sources.
+
+```{r}
+library(ggpubr)
+top3g_web<-gather(full, key = Source, value = Hits, c("gtw_cattle", "gtw_dairy_prod"))
+top3g_web_plot<-ggplot(top3g_web, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+
+
+top3g_news<-gather(full, key = Source, value = Hits, c("gtn_cattle", "gtn_dairy_prod"))
+top3g_news_plot<-ggplot(top3g_news, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+
+
+top3red<-gather(full, key = Source, value = Hits, c("red_cattle", "red_dairy_prod"))
+top3red_plot<-ggplot(top3red, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+
+
+ggarrange(top3g_web_plot+ rremove("x.text"), top3g_news_plot+ rremove("x.text"), top3red_plot + rremove("x.text"), 
+          labels = c("Google Web", "Google News", "Reddit Discussion"),
+          ncol = 2, nrow = 2)
+
+```
+
 
 ### Analysis
 
-One interesting relationship we found was between the Cattle Survey data release dates and Google interest in the corresponding keywords. This would suggest many users are well aware of this product, and know how to search for the data releases. Perhaps one way people look for NASS data is via a Google search. This might also suggest that users find it easier to search for this NASS product on Google than to actually navigate through the NASS website itself.
+One interesting relationship we found was that between the Cattle Survey data release dates and Google interest in the corresponding keywords. This would suggest that many users are well aware of this product, and know how to search for the data releases. Perhaps one way people look for NASS data is by way of Google search? This might also suggest that users find it easier to search for this NASS product on Google than to actually navigate through the NASS website itself.
 
 ```{r}
 
@@ -377,20 +417,27 @@ cattleplot<-cattleplot+geom_vline(aes(xintercept=as.numeric(cattle_date)), color
 cattleplot+scale_x_discrete(label = function(x) stringr::str_trunc(x, 10))
 
 ```
-Another interesting finding was the relationship between the NASS Crop Progress and Condition weekly releases and a well known flood that impacted the Midwest in Spring of 2019. While google interest in the the weekly releases is relatively consistent for most of the two years, there was a significant spike in searches in the timeframe immediately after the flood. This spike may have been driven my commodity traders who were particularly concerned with the impact that this flood would have had on corn and soybeans. This interest may also have been driven by the abundant mainstream news articles that covered this flooding event, raising awareness about NASS Crop Progress and Condition in the general public.
-```{r}
-# Crop Progress and Condition Plot
-progplot<-ggplot(full,aes(x=tdate)) + 
-geom_point(aes(x= tdate, y=gtw_crop_prog_cond), color = "blue")
-progplot+geom_vline(xintercept=as.numeric(full$tdate[120]), linetype=1)
-```
-Finally, we found a somewhat interesting relationship between Dairy Product Google news searches (blue bubbles) and Reddit discussion (red bubbles). These web metrics were nearly completely independent of NASS data releases, yet they seemed to be loosely related to one another. Perhaps this is an example where there is interest in a certain agricultural activity, yet NASS data about that activity is not reaching the public. This could be an opportunity for a public outreach campaign. That said, it is difficult to know if the scope of the public interest truly overlaps with information made available in the NASS data. For instance, the largest conversation about dairy products (Red bubbles) was actually a debate concerning the merits of veganism, and whether or not dairy should be included in the human diet. 
+
+Additionally, we possibly observed relationship between Dairy Product Google news searches (blue bubbles) and Reddit discussion (red bubbles). These web metrics were nearly completely independent of NASS data releases, yet they seemed to be loosely related to one another. Perhaps this is an example where there is interest in a certain agricultural activity, yet NASS data about that activity is not reaching the public. This could be an opportunity for a public outreach campaign. That said, it is difficult to know if the scope of the public interest truly overlaps with information made available in the NASS data. For instance, the largest conversation about dairy products (Red bubbles) was actually a debate concerning the merits of veganism, and whether or not dairy should be included in the human diet. 
+
 ```{r}
 dairyplot<-ggplot(full,aes(x=tdate)) + 
 geom_point(aes(x= tdate, y=.52, size =red_dairy_prod), color = "Red")+
 geom_point(aes(x= tdate, y=.48, size =gtn_dairy_prod), color = "blue")+
 geom_vline(aes(xintercept=as.numeric(dairy_prod_date)), color="black")
 dairyplot+theme(axis.text.y = element_blank())+ylim(0,1)
+```
+
+
+Another interesting finding was the relationship between the NASS Crop Progress and Condition weekly releases and a well known flood that impacted the Midwest in Spring of 2019. The spring flooding in 2019 for the Midwest was one of the worst floods the Midwest has ever experienced.  it set many records.  Major flooding was observed at all sites along the Mississippi and ALL sites saw one of their top 5 crests on record.  [@NWS2019] While Google interest in the the weekly releases is relatively consistent for most of the two years, there was a significant spike in searches in the timeframe immediately after the flood. This spike may have been driven my commodity traders who were particularly concerned with the impact that this flood would have had on corn and soybeans. This interest may also have been driven by the abundant mainstream news articles that covered this flooding event, raising awareness about NASS Crop Progress and Condition in the general public.  
+
+![Council Bluffs, Iowa:  March 2018 on the left & March 2019 on the right.](C:/Users/kilbdo/Desktop/classes/FOCD/finalproject/Historic_floods.jpg)
+
+```{r}
+# Crop Progress and Condition Plot
+progplot<-ggplot(full,aes(x=tdate)) + 
+geom_point(aes(x= tdate, y=gtw_crop_prog_cond), color = "blue")
+progplot+geom_vline(xintercept=as.numeric(full$tdate[120]), linetype=1)
 ```
 
 ## Discussion
@@ -402,6 +449,5 @@ Further investigation into internet sources where a majority of the agriculture 
 Only preliminary evaluation of the content of the tweets were analyzed, spot checking for checks on reference to the USDA products  on items with little total reports.  Due to the nature of the titles of our product releases, sentiment analysis is difficult to determine.  For instance, the product release titled "Livestock Slaughter" could be interpreted literally where people are discussing the massive livestock slaughter that occurred in the late spring of 2020 due to the massive restaurant closures across the country.  Demand for livestock consumables drastically declined and the industry had no way of immediately rerouting the supply of meat to alternate markets.  With more time, further investigation could be used to determine which matches were referring to NASS reports.  
 
 Once the reference to NASS products was narrowed down, it could be useful to analyze sentiment of the mention.  Gauging a positive or negative overall sentiment may help guide the agency response to reactions of a particular product release.
-
 
 ## References
