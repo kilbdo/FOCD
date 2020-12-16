@@ -1,0 +1,417 @@
+---
+title: "Public Interest in USDA/NASS's Statistical Reports"
+subtitle: "via social media"
+author: "Doug Kilburg & Arthur Rosales"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    df_print: kable
+references:
+- id: NWS2019
+  title: Spring Flooding Summary 2019
+  author:
+  - family: National Oceanic and Atmosphere Administration
+    given: National Weather Service
+  type: article
+  publisher: https://www.weather.gov/dvn/summary_SpringFlooding_2019
+  issued:
+    year: 2019
+---
+
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+library(reticulate)
+library(anytime)
+library(scales)
+library(zoo)
+library(formatR)
+```
+
+## Introduction
+
+Food is a necessity in everyone's life.  It serves as a life source in some instances and entertainment as well as a luxury in others.  As a result, the United States Department of Agriculture (USDA) strives to serve the American Public as well as members of the international community, not just farmers. It is this reason the USDA recently launched a website geared towards better customer service.  https://ask.usda.gov/s/.
+
+The USDA is subdivided into many smaller agencies within the cabinet level department.  The National Agricultural Statistics Service (NASS) is a statistical agency within the USDA.  Its main purpose is to provide timely, useful and accurate statistics in service to U.S. agriculture.  Timely and accurate are two metrics that are easily quantified.  Useful statistics is subject to interpretation by the user.  As a result, NASS strives to engage the users of our statistical publications in multiple ways to ensure the data the agency provides remains useful to these people.  NASS holds data users meetings annually, to gather feedback on the usefulness of our products, and potential ways to improve the usefulness of the products in the future.  NASS also recently started sponsoring a hashtag #StatChat on Twitter through the agency's Twitter account.  After speculative commodity report releases, considered to be the most major of our reports among policy makers, members of the media, and commodity investors, one of the Chief Statisticians in charge of the estimates for the speculative commodity reports will answer Twitter questions regarding information in the release that possess the hashtag #StatChat.  
+
+Although this provides support of our speculative products, many users of our data are not related to speculative commodity reports.  Users range from teachers learning which state produces the most pumpkins for a lesson on Halloween and Thanksgiving, to farmers wanting to market local produce at a farmer's market.  NASS employees occasionally are told how people use the NASS data when they first meet someone and tell them what they do for work.  This lends to wonder if there is strong enough interest in other NASS products that would warrant #StatChat sessions besides just speculative commodity releases.
+
+## Specific NASS reports
+
+NASS issues hundreds of reports annually.  Some are published weekly, monthly, quarterly and yearly.  Due to the large number of releases by our agency, we will focus on primary monthly and  yearly reports.  We have identified 16 reports to investigate public interest.  Below is a specific list of reports for which we will attempt to gauge public interest.  Note that the Farm and Ranch Irrigation Survey changed its name to the Irrigation and Water Management Survey (IWMS) at the end of 2018.  To ensure proper interest, both survey titles will be used to ensure proper coverage.
+
+- Agricultural Chemical Usage Survey
+- Agricultural Prices 
+- Cattle
+- Cattle on Feed
+- Census of Horticulture
+- Certified Organic Survey
+- Cold Storage Report
+- Cotton Ginnings
+- Crop Progress 
+- Dairy Products Report
+- Grain Crushings
+- Hop Stocks
+- Irrigation and Water Management Survey (IWMS)/Farm and Ranch Irrigation Survey (FRIS)*
+- Livestock Slaughter
+- Local Foods Survey
+- Rice Stocks
+
+## Data Sources
+
+The rise of global internet access by the majority of people lends to the internet an obvious choice as a resource for resources to gauge public interest.
+
+There are a few social media sights on the internet that will provide a diverse snapshot on which to gauge public interest.  We will document how we used Python to scrape Reddit and RStudio to scrape Twitter and as well as scan Google web and news searches for our key terms. We defined our interest period to be from November 1, 2018 to November 1, 2020.
+
+## Reddit
+
+For Reddit,we chose Python for webscraping due to the availability of the "psaw" module. This module is in fact a wrapper for the Pushshift API, which is an advancement over the standard reddit API due to a number of capabilities. These include the ability to analyze large amounts of data, and to grab data from historic data ranges, among others.The pushift API itself is known to be difficult to use, however, and the Python "psaw" wrapper module allows for a much more intuitive toolset for making reddit queries. There were three subreddits we scraped using Python: Agriculture, Farming and Science. Other subreddits were initially considered, but webscraping attemputs resulted in zero or extremely few results with dubious relevance. Within each chosen subreddit, both submissions and comments were collected which matched the keyword searches. Keyword searches were performed with both phrases which were either capitalized or not, and included the word "survey" or not. For the sake of illustration, only the "Dairy Products Survey" within the Agriculture subreddit is shown here.
+
+```{r eval = FALSE}
+##insert reddit code here
+import pandas as pd
+import datetime as dt
+import praw
+from psaw import PushshiftAPI
+import os
+# working directory
+os.chdir('/Users/arthu/Documents/JPSM/surv727/TermProject')
+# set API
+api = PushshiftAPI()
+# Set beging and end date of period interested in
+start_epoch_2020=int(dt.datetime(2019, 1, 1).timestamp())
+end_epoch_2020=int(dt.datetime(2020, 9, 20).timestamp())
+# Create empty lists
+# could create multiple lists this way right here
+subm_list_cert_org = []
+subm_list_cold_stor= []
+subm_list_cattle_feed= []
+subm_list_rice_stocks= []
+subm_list_local_foods= []
+subm_list_ag_prices= []
+subm_list_farm_cattle= []
+subm_list_farm_ranch_irr= []
+subm_list_irr_water_mgmt= []
+subm_list_cott_gin= []
+subm_list_dairy_prod= []
+subm_list_live_slaughter= []
+subm_list_grain_crush= []
+subm_list_grain_crush= []
+subm_list_hop_stocks= []
+subm_list_ag_chem= []
+subm_list_census_hort= []
+subm_list_crop_prog_cond= []
+#Dairy Products
+# Fill lists with data from API
+subm_list_dairy_prod = list(api.search_submissions(
+  q='"Dairy Products"|"Dairy Products Survey"|"dairy products"|"dairy products survey"',
+                            before=end_epoch_2020,
+                            after=start_epoch_2020,               
+                            subreddit='agriculture'))
+# Save as .csv
+pd.DataFrame([s.d_ for s in subm_list_dairy_prod]).to_csv('subm_list_dairy_prod.csv', index=False)
+# get list of submissions from objects above to download comments
+list_submission_ids_dairy_prod = [s.id for s in subm_list_dairy_prod]
+# generate empty list of comments
+all_comments_dairy_prod = []
+# loop through submission ids
+for submission_id in list_submission_ids_dairy_prod:
+   # use the link_id option to add submission id
+   comments_for_submission =  list(api.search_comments(link_id = submission_id))
+   # add list of current comments to list of comments
+   all_comments_dairy_prod = all_comments_dairy_prod + [c.d_ for c in comments_for_submission]
+# transform to data frame
+all_comments_dairy_prod_df = pd.DataFrame(all_comments_dairy_prod)
+# save comments as csv
+all_comments_dairy_prod_df.to_csv('all_comments_dairy_prod.csv', sep='\t', encoding='utf-8')
+```
+
+Once the reddit data was collected into csv files, they had to be aggregated into a single dataset which could be formatted to merge with the Twitter and Google data. The resulting dataset had columns indicating the keyword of interest, with rows being individual dates during our time period of interest. Each comment or submission was counted as a single "hit" equally for the purposes of this study. One downside of the Pushshift API is there is no convenient way to include submission or comment scores, so we could not take advantage of the reddit popularity ranking system in this study with this method. We begun my combining all data within each subreddit, by aggregating the comments hits and submission hits separately.
+
+```{r eval=FALSE}
+#Example for dairy survey. This had to be done for all survey keywords.
+#REDDIT COMMENTS
+dairy_prod_comm<-read.delim("all_comments_dairy_prod.csv", header = TRUE, sep = "\t", quote = "\"",
+                   dec = ".", fill = TRUE)
+dairy_prod<-subset(dairy_prod_comm, select=c(body,retrieved_on,created))
+#Create a column which will eventually become a common identifier for data from all web sources
+dairy_prod<-dairy_prod %>%
+mutate(product="dairy_prod")
+#Once repeated for all products of interest, they could be aggregated for all subreddit specific data.
+#This must be repeated for all subreddits.
+products <-list(cattle,census_hort,cert_org,cold_stor,crop_prog_cond,dairy_prod)
+#assign name to subreddit category!
+all_ag_comm<-do.call(rbind,products)
+all_ag_comm<- all_ag_comm %>%
+mutate(subreddit="ag")%>%
+mutate(type="comm")
+#REDDIT  SUBMISSIONS
+dairy_prod_subm<-read.delim("subm_list_dairy_prod.csv", header = TRUE, sep = ",", quote = "\"",
+                   dec = ".", fill = TRUE)
+dairy_prod<-subset(dairy_prod_subm, select=c(body,retrieved_on,created))
+dairy_prod<-dairy_prod %>%
+mutate(product="dairy_prod")
+all_ag_subm<-do.call(rbind,products)
+all_ag_subm<- all_ag_subm %>%
+mutate(subreddit="ag")%>%
+mutate(type="subm")
+```
+Eventually, all the reddit data from each subreddit were combined into a single dataset.
+
+```{r eval=FALSE}
+allreddit_list<-list(all_ag_comm,all_ag_subm,all_farm_comm,all_farm_subm,all_sci_comm,all_sci_subm)
+all_reddit<-do.call(rbind,allreddit_list)
+library(anytime)
+reddit<-all_reddit %>%
+mutate(time=anytime(created))%>%
+mutate(date=anydate(time))
+unique(reddit$product, incomparables = FALSE)
+```
+
+## Twitter 
+
+Due to the Twitter restrictions on scraping web tweets across the entire platform, we decided to focus solely on the Twitter Timelines of the followers from the NASS Twitter account.  We first pulled all the follower screen names from Twitter, then we imported the list into RStudio as a list we would later subset.  At the time of the follower pull, there were 41,244 Twitter followers of the NASS account.
+
+We used the RTweets package in RStudio to access the twitter platform, and used the get_Timeline function in that package to scrape the timelines of all the NASS followers.  This function has a maximum capacity of 3200 tweets per timeline, but we found this wasn't an issue with our list of users and the time frame we specified.
+
+We also subsetted the scraped timelines to only include the variables  We needed, as well as to match our two year period of reference.
+
+```{r eval=FALSE}
+twitterfollowers <- as.data.frame(twitterfollowers)
+twitternames <- twitterfollowers[,"screenname"]
+#scrape the twitter follower's timelines
+followertweets <- get_timeline(
+  twitternames,
+  n = 3200,
+  max_id = NULL,
+  home = FALSE,
+  parse = TRUE,
+  check = FALSE,
+  token = NULL)
+cleantweets2 <- followertweets[ ,c("created_at","screen_name","text","reply_to_screen_name","is_retweet")]
+cleantweets3 <- subset(cleantweets2,cleantweets2$created_at>as.Date("2018-11-30"))
+cleantweets3$Month_Yr <- format(as.Date(cleantweets3$created_at), "%Y-%m")
+```
+
+We then subsetted the tweets obtained from the timelines of the followers from our NASS Twitter account by each product survey, enabling us to obtain a count of the tweets containing mentions of our product names.  To ensure the tweets mentioning local foods were indeed referencing the USDA reports, the term USDA was also used as a subset requirement.  
+
+```{r eval=FALSE}
+OrganTwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Organic Survey"))
+ColdStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cold Storage"))
+COFtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle on Feed"))
+RiceStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Rice Stocks"))
+CropProgtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Crop Progress"))
+localfood2twitter <- subset(cleantweets3,str_detect(cleantweets3$text,"USDA"))
+LocalFoodTwitter <- subset(localfood2twitter,str_detect(localfood2twitter$text,"Local Food"))
+AgPricestwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Agricultural Prices"))
+Cattletwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle"))
+FRIStwitter <-  subset(cleantweets3,str_detect(cleantweets3$text,"Farm and Ranch Irrigation Survey"))
+IWMStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Irrigation and Water Management Survey"))
+CottonGintwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cotton Ginnings"))
+DairyPtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Dairy Products"))
+LSlaughtertwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Livestock Slaughter"))
+GrainCrushtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Grain Crushings"))
+HopStwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Hop Stocks"))
+AgChemtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Agricultural Chemical Usage"))
+Horttwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Census of Horticulture"))
+CattleNumtwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cattle Numbers"))
+ColdSReptwitter <- subset(cleantweets3,str_detect(cleantweets3$text,"Cold Storage eport"))
+```
+
+## Google searches
+
+Combing all keyword phrases into one string resulted in the following error:
+
+Error in gtrends()...length(keyword) <= 5 is not TRUE
+
+As a result, we broke up the string of keyword phrases into distinct groups of five keyword phrases to use to query both Google web and Google news searches.
+
+
+```{r eval=FALSE}
+keyword1 <- c("Certified Organic Survey", "Cold Storage", "Cattle on Feed", "Rice Stocks", "Crop Progress")
+keyword2 <- c("Local Foods", "Agricultural Prices", "Cattle Survey", "Farm and Ranch Irrigation Survey", 
+              "Irrigation and Water Management Survey")
+keyword3 <- c("Cotton Ginnings", "Dairy Products", "Livestock Slaughter", "Grain Crushings", "Hop Stocks")
+keyword4 <- c("Agricultural Chemical Usage", "Census of Horticulture")
+res_finalw1 <- gtrends(keyword1, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "web",tz=0)
+res_finalw2 <- gtrends(keyword2, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "web",tz=0)
+res_finalw3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "web",tz=0)
+res_finalw4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "web",tz=0)
+res_finaln1 <- gtrends(keyword1, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "news",tz=0)
+res_finaln2 <- gtrends(keyword2, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "news",tz=0)
+res_finaln3 <- gtrends(keyword3, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "news",tz=0)
+res_finaln4 <- gtrends(keyword4, geo = "US", time = "2018-11-01 2020-11-01",
+                       low_search_volume = T, gprop = "news",tz=0)
+```
+
+In the end, we combined all versions into one file and deleted each instance that had zero hits.  We spread the datasets to form tidy data, allowing us to easy calculate totals across NASS products.
+
+```{r, eval=FALSE, include = FALSE}
+res_time_finalw <- rbind(res_time_finalw1,res_time_finalw2,res_time_finalw3,res_time_finalw4)
+res_time_finaln <- rbind(res_time_finaln1,res_time_finaln2,res_time_finaln3,res_time_finaln4)
+#only keep dates with positive hits
+res_time_finalweb <- subset(res_time_finalw, hits>0)
+res_time_finalnews <- subset(res_time_finaln, hits>0)
+res_time_web <- spread(res_time_finalweb, key = keyword, value = hits)
+res_time_news <- spread(res_time_finalnews, key = keyword, value = hits)
+```
+
+
+### Results & Data exploration
+
+Once we collected data from all sources, they need to be combined into a single dataset for analysis. Of note, this includes a separate dataset of "Dates" which is effectively the USDA NASS product release calendar for the relevant dates.
+
+
+```{r}
+# the anytime() function was used to create numeric time and date columns which were useful for future plots
+setwd("C:\\Users\\arthu\\OneDrive\\Documents\\JPSM\\surv727\\TermProject\\alldata")
+gtw<-read.csv("gtw.csv")
+gtn<-read.csv("gtn.csv")
+red<-read.csv("red.csv")
+dates<-read.csv("dates.csv")
+dates$ddate <- as.Date(dates$date , format = "%m/%d/%y")
+gtw$ddate <- as.Date(gtw$date , format = "%m/%d/%Y")
+gtn$ddate <- as.Date(gtn$date , format = "%m/%d/%Y")
+red$ddate <- as.Date(red$date , format = "%m/%d/%Y")
+full<-dates %>%
+left_join(gtw, by="ddate")
+full<-full %>%
+left_join(gtn, by="ddate")
+full<-full %>%
+left_join(red, by="ddate")
+full<-full%>%
+mutate(tdate=anytime(ddate))
+full<-full%>%
+mutate(tdate=anytime(ddate))
+full<-full%>%
+mutate(cattle_date=ifelse(cattle==1,tdate,cattle))
+full<-full%>%
+mutate(dairy_prod_date=ifelse(dairy_prod==1,tdate,dairy_prod))
+full<-full%>%
+mutate(cold_stor_date=ifelse(cold_stor==1,tdate,cold_stor))
+```
+
+The Google web searches are dominated by "Cattle", "Cold Storage", and "Dairy Products", which are related and all pertain to livestock aspects of agriculture. The least popular search was "Agricultural Prices". 
+
+```{r}
+googlew<-full[ , grepl( "gtw_" , names( full ) ) ]
+googlewsums=data.frame(value=colSums(googlew[,], na.rm=TRUE))
+googlewsums$key=rownames(googlewsums)
+googlewsums$key  <- with(googlewsums, reorder(key, -value))
+ggplot(data=googlewsums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
+```
+
+Next, we can see the keyword categories with the most hits for Google News searches. Again, this was very livestock driven, with "Cattle", "Cold Storage", and "Dairy Products" driving the most hits.
+
+```{r}
+# What happens here depends on the specific project
+googlen<-full[ , grepl( "gtn_" , names( full ) ) ]
+googlensums=data.frame(value=colSums(googlen[,], na.rm=TRUE))
+googlensums$key=rownames(googlensums)
+googlensums$key  <- with(googlensums, reorder(key, -value))
+ggplot(data=googlensums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
+```
+
+We also look at the most popular discussion topics within Reddit. In line with the google hits, "Cattle" and "Dairy Products" were the top two discussion topics in the selected subreddits. This was distantly followed by "Crop Progress and Condition", "Census of Horticulture", and "Cold Storage".
+
+```{r}
+# What happens here depends on the specific project
+reddit<-full[ , grepl( "red_" , names( full ) ) ]
+redditsums=data.frame(value=colSums(reddit[,], na.rm=TRUE))
+redditsums$key=rownames(redditsums)
+redditsums$key  <- with(redditsums, reorder(key, -value))
+ggplot(data=redditsums, aes(x = reorder(key, value), y=value, fill=key)) +
+geom_bar(colour="black", stat="identity")+ coord_flip()
+```
+
+We are curious if there are factors which drive the interest in these products over time. Here, we compare the trends in interest in the common top two between the three web sources "Cattle" and "Dairy Products". At first look, the trend for these two topics of interest seem quite different for each of the three web sources.
+
+```{r}
+library(ggpubr)
+top3g_web<-gather(full, key = Source, value = Hits, c("gtw_cattle", "gtw_dairy_prod"))
+top3g_web_plot<-ggplot(top3g_web, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+top3g_news<-gather(full, key = Source, value = Hits, c("gtn_cattle", "gtn_dairy_prod"))
+top3g_news_plot<-ggplot(top3g_news, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+top3red<-gather(full, key = Source, value = Hits, c("red_cattle", "red_dairy_prod"))
+top3red_plot<-ggplot(top3red, aes(x=tdate,y=Hits, group=Source,color=Source, na.rm=TRUE)) + 
+geom_point()
+figure<-ggarrange(top3g_web_plot+ rremove("x.text"), top3g_news_plot+ rremove("x.text"),
+                  top3red_plot + rremove("x.text"), 
+          labels = c("Google Web", "Google News", "Reddit Discussion"),
+          ncol = 2, nrow = 2)
+
+annotate_figure(
+  top = text_grob("Cattle vs Dairy Product Hits Over Time", color = "Black", size = 14),
+                #fig.lab = "Cattle vs Dairy Product Hits Over Time", fig.lab.face = "bold",
+                figure
+                )
+```
+
+
+### Analysis
+
+One interesting relationship we found was that between the Cattle Survey data release dates and Google interest in the corresponding keywords. The Google web hits for "cattle" seem to follow a cyclical, seasonal pattern that appear to correspond nicely with the NASS data releases. This would suggest that many users are well aware of this product, and know how to search for the data releases. Perhaps one might also conclude that a popular way for people  to look for NASS data is by way of Google search directly. We might infer from this that some users find it easier to search for this NASS product on Google than to actually navigate through the NASS website itself. In the following figure, the vertical black lines pinpoint publication dates for the Cattle Survey throughout the timeframe of interest.
+
+```{r}
+#cattle plot
+cattledf<-gather(full, key = Source, value = Hits, c("gtw_cattle", "gtn_cattle"))
+cattleplot<-ggplot(cattledf, aes(x=tdate,y=Hits, group=Source,color=Source)) + 
+geom_point()
+cattleplot<-cattleplot+geom_vline(aes(xintercept=as.numeric(cattle_date)), color="black")
+cattleplot+ggtitle("Cattle Survey: Google Web and News Hits vs NASS Publication Dates")
+
+```
+
+Additionally, we possibly observed relationship between Dairy Product Google news searches (blue bubbles) and Reddit discussion (red bubbles). These web metrics were nearly completely independent of NASS data releases, yet they seemed to be loosely related to one another. Perhaps this is an example where there is interest in a certain agricultural activity, yet NASS data about that activity is not reaching the public. This could be an opportunity for a public outreach campaign. That said, it is difficult to know if the scope of the public interest truly overlaps with information made available in the NASS data. For instance, the largest conversation about dairy products (Red bubbles) was actually a debate concerning the merits of veganism, and whether or not dairy should be included in the human diet. Again, the verticle black lines mark the publication dates for the relevant NASS data product.
+
+```{r}
+dairyplot<-ggplot(full,aes(x=tdate)) + 
+geom_point(aes(x= tdate, y=.52, size =red_dairy_prod), color = "Red")+
+geom_point(aes(x= tdate, y=.48, size =gtn_dairy_prod), color = "blue")+
+geom_vline(aes(xintercept=as.numeric(dairy_prod_date)), color="black")
+dairyplot+theme(axis.text.y = element_blank())+ylim(0,1)+
+ggtitle("Dairy Products: Reddit Discussion vs Google News Search")
+```
+
+
+Another interesting finding was the relationship between the NASS Crop Progress and Condition weekly releases and a well known flood that impacted the Midwest in Spring of 2019. The spring flooding in 2019 for the Midwest was one of the worst floods the Midwest has ever experienced.  it set many records.  Major flooding was observed at all sites along the Mississippi and ALL sites saw one of their top 5 crests on record.  [@NWS2019] 
+
+![Council Bluffs, Iowa:  March 2018 on the left & March 2019 on the right.](C:/Users/arthu/OneDrive/Documents/JPSM/surv727/TermProject/Historic_Floods.png)
+
+While Google interest in the the weekly releases is relatively consistent for most of the two years, there was a significant spike in searches in the timeframe immediately after the flood. This spike may have been driven by commodity traders who were particularly concerned with the impact that this flood would have had on corn and soybeans. This interest may also have been driven by the abundant mainstream news articles that covered this flooding event, raising awareness about NASS Crop Progress and Condition in the general public. In the following graph,the verticle black line demarks an approximate peak flood date.
+```{r}
+# Crop Progress and Condition Plot
+progplot<-ggplot(full,aes(x=tdate)) + 
+geom_point(aes(x= tdate, y=gtw_crop_prog_cond), color = "blue")
+progplot+geom_vline(xintercept=as.numeric(full$tdate[120]), linetype=1)+
+ggtitle("Google Hits for Crop Progress and Condition vs Spring Flood")
+```
+
+## Discussion
+
+It was the intention to include internal metrics, such as the total number of downloads from the official NASS's official USDA product release website; however, after repeated emails, the information wasn't available yet at publish time.  With this additional information, it'd be useful to compare the relationship between public interest in social media and the number of downloads from the agency website.  If there was a strong relationship between the two, it may be useful to use download metrics in the future as a guide for which products warrant additional public outreach support.
+
+Further investigation into internet sources where a majority of the agriculture community would also be beneficial.  Using our current sources provides a good first introduction to public interest; however, the majority of our data users may be concentrated better in other social media outlets in the internet.
+
+Only preliminary evaluation of the content of the tweets were analyzed, spot checking for checks on reference to the USDA products  on items with little total reports.  Due to the nature of the titles of our product releases, sentiment analysis is difficult to determine.  For instance, the product release titled "Livestock Slaughter" could be interpreted literally where people are discussing the massive livestock slaughter that occurred in the late spring of 2020 due to the massive restaurant closures across the country.  Demand for livestock consumables drastically declined and the industry had no way of immediately rerouting the supply of meat to alternate markets.  With more time, further investigation could be used to determine which matches were referring to NASS reports.  
+
+Once the reference to NASS products was narrowed down, it could be useful to analyze sentiment of the mention.  Gauging a positive or negative overall sentiment may help guide the agency response to reactions of a particular product release.
+
+## References
